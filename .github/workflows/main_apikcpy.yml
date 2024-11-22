@@ -42,6 +42,10 @@ jobs:
             release.zip
             !venv/
 
+      - name: Run App
+        run: uvicorn main:app
+
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
