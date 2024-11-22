@@ -39,3 +39,6 @@ async def root():
 async def get_version():
     return {"version": API_VERSION}
 
+@app.get("/saludo")
+async def saludar():
+    return {"message": "Saludos Fraternos"}
