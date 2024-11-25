@@ -10,7 +10,10 @@ from process_files import process_and_merge_files
 
 API_VERSION = "0.0.3"
 
-app = FastAPI()
+app = FastAPI(
+    title = "KC-API",
+    version= API_VERSION
+)
 
 UPLOAD_DIRECTORY = "uploads"
 RESULT_DIRECTORY = "results"
@@ -21,28 +24,33 @@ os.makedirs(RESULT_DIRECTORY, exist_ok=True)
 
 @app.post("/upload/")
 async def upload_files(files: List[UploadFile] = File(...)):
-    print(files)
-    # if len(files) != 6:
-    #     # return {"error": "Se deben subir exactamente 6 archivos"}
-    #     raise HTTPException(status_code=400, detail="Se deben subir exactamente 6 archivos")
+    try:
+        for file in files:
+            print(file)
+            # Lista para almecenarlos en la carpeta uploads
+            file_paths = []
+            # Quitamos los que no sean .csv y detenemos la ejecucion 
+            if not file.filename.endswith(".csv"):
+                raise HTTPException(status_code=400, detail=f"El archivo {file.filename} NO es un CSV")
+            else:
 
-    # file_paths = []
-    # for file in files:
-    #     if not file.filename.endswith(".csv"):
-    #         # El raise va a detener la ejecución en cuanto suceda la excepción 
-    #         raise HTTPException(status_code=400, detail=f"El archivo {file.filename} NO es un CSV")
-    #     file_path = os.path.join(UPLOAD_DIRECTORY, file.filename)
-    #     with open(file_path, "wb") as buffer:
-    #         buffer.write(await file.read())
-    #     file_paths.append(file_path)
-    # Obtenemos la ruta del resultado y la información del precosado 
-    # result_path, info_porcessed = process_and_merge_files(file_paths)
-    return {"message": "Upload finalizado"}
+                file_path = os.path.join(UPLOAD_DIRECTORY, file.filename)
+                with open(file_path, "wb") as buffer:
+                    buffer.write(await file.read())
+                file_paths.append(file_path)
 
-    # return FileResponse(result_path,
-    #                     headers= {"Info-Message": f"{info_porcessed}"},
-    #     
-    #                 filename="resultado_final.csv")
+            print(file_paths)
+
+        result_path, info_porcessed = process_and_merge_files(file_paths)
+
+        return FileResponse(result_path,
+                            headers= {"Info-Message": f"{info_porcessed}"},
+            
+                            filename="resultado_final.csv")
+    except:
+        raise HTTPException(status_code=400, detail="Se deben subir exactamente 6 archivos")
+
+
 @app.post("/files/")
 async def create_file(file: Annotated[bytes, File()]): 
     return {"file_size": len(file)}

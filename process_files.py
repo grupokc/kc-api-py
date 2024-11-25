@@ -10,7 +10,6 @@ def process_and_merge_files(file_paths) -> tuple:
         df.loc[:, 'archivo_origen'] = os.path.basename(file_path) # Dentro del df se añade de que archivo se obtuvo el registro
         dataframes.append(df)
     
-    # Unir todos los dataframes
     result = pd.concat(dataframes, ignore_index=True)
     
     # Guardar el resultado
@@ -18,5 +17,29 @@ def process_and_merge_files(file_paths) -> tuple:
     result.to_csv(result_path, index=False)  
 
     info_processed = f"Se procesaron {len(file_paths)} archivos, con {result.shape[0]} registros"
-    
+
+    # result_path = "ok"
+    # info_processed = "good"
+
+    print(result_path, " || ", info_processed)
     return result_path, info_processed
+
+
+def quitador_letras(texto: str) -> int:
+    """
+    La función elimina letras de cualquier cadena,
+    dejando solo los números como un entero.
+    """
+    texto = str(texto)
+    sin_letras = "".join(char for char in texto if char.isdigit())
+    return int(sin_letras) if sin_letras else 0
+
+
+def quitador_especiales(texto :str) -> str:
+    """
+    La función se encarga de quitar caracteres que no sean literales
+    """
+    texto = texto.strip()
+    texto = texto.replace("?", "Ñ").strip()
+
+    return texto
