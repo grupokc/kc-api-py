@@ -8,7 +8,7 @@ import os
 from typing import List
 from process_files import process_and_merge_files
 
-API_VERSION = "0.0.3"
+API_VERSION = "0.0.4"
 
 app = FastAPI(
     title = "KC-API",
