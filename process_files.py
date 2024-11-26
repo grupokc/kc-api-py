@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from tools import get_unix_datetime
 
 def process_and_merge_files(file_paths: list) -> tuple:
     dataframes = []
@@ -7,13 +8,17 @@ def process_and_merge_files(file_paths: list) -> tuple:
         df = pd.read_csv(file_path, sep= ",", encoding= "latin1")
         # Aquí puedes agregar cualquier procesamiento específico que necesites
         # Por ejemplo, podríamos añadir una columna con el nombre del archivo:
+        df.loc[:, -1] = df.loc[:, -1].apply(no_letters) # quita las letras de la ultima columna
+
         df.loc[:, 'archivo_origen'] = os.path.basename(file_path) # Dentro del df se añade de que archivo se obtuvo el registro
         dataframes.append(df)
     
     result = pd.concat(dataframes, ignore_index=True)
     
     # Guardar el resultado
-    result_path = os.path.join("results", "resultado_final.csv") #Devuelve /results/resultado_final.csv
+    dateFromatUnix = get_unix_datetime() # Formato Unix
+    new_name = f"processed_{dateFromatUnix}.csv"
+    result_path = os.path.join("results", new_name) #Devuelve /results/new_name
     result.to_csv(result_path, index=False)  
 
     info_processed = f"Se procesaron {len(file_paths)} archivos, con {result.shape[0]} registros"

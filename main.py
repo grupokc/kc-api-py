@@ -1,6 +1,7 @@
+from email.utils import formatdate
 from fastapi import FastAPI, File, UploadFile
 from typing import Annotated
-
+from tools import get_unix_datetime
 from fastapi.responses import FileResponse
 from fastapi.exceptions import HTTPException
 import pandas as pd
@@ -26,6 +27,8 @@ os.makedirs(RESULT_DIRECTORY, exist_ok=True)
 async def upload_files(files: List[UploadFile] = File(...)):
     try:
         file_paths = []
+        dateUnix = get_unix_datetime() # Para nombrar a los archivos
+
         for file in files:
             print(file)
             # Lista para almecenarlos en la carpeta uploads
@@ -33,7 +36,8 @@ async def upload_files(files: List[UploadFile] = File(...)):
             if file.filename.endswith(".csv") == False:
                 raise HTTPException(status_code=400, detail=f"El archivo {file.filename} NO es un CSV")
             else:
-                file_path = os.path.join(UPLOAD_DIRECTORY, file.filename)
+                new_name_file = file.filename.replace(".csv","_" + dateUnix + ".csv")
+                file_path = os.path.join(UPLOAD_DIRECTORY, new_name_file)
                 with open(file_path, "wb") as buffer:
                     buffer.write(await file.read())
                 file_paths.append(file_path)
@@ -47,7 +51,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
                             status_code= 200,
                             headers= {"Info-Message": f"{info_porcessed}"},
                             media_type= ".csv",
-                            filename= result_path.rsplit("\\", 1)[0], 
+                            filename= os.path.basename(result_path), 
                             )
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")

@@ -163,4 +163,5 @@ cython_debug/
 
 *.csv 
 *.xlsx
-
+*.vsidx
+venv1/
