@@ -25,31 +25,32 @@ os.makedirs(RESULT_DIRECTORY, exist_ok=True)
 @app.post("/upload/")
 async def upload_files(files: List[UploadFile] = File(...)):
     try:
+        file_paths = []
         for file in files:
             print(file)
             # Lista para almecenarlos en la carpeta uploads
-            file_paths = []
             # Quitamos los que no sean .csv y detenemos la ejecucion 
-            if not file.filename.endswith(".csv"):
+            if file.filename.endswith(".csv") == False:
                 raise HTTPException(status_code=400, detail=f"El archivo {file.filename} NO es un CSV")
             else:
-
                 file_path = os.path.join(UPLOAD_DIRECTORY, file.filename)
                 with open(file_path, "wb") as buffer:
                     buffer.write(await file.read())
                 file_paths.append(file_path)
 
-            print(file_paths)
+        print(file_paths)
 
         result_path, info_porcessed = process_and_merge_files(file_paths)
 
-        return FileResponse(result_path,
+        print(result_path)
+        return FileResponse(path= result_path,
+                            status_code= 200,
                             headers= {"Info-Message": f"{info_porcessed}"},
-            
-                            filename="resultado_final.csv")
-    except:
-        raise HTTPException(status_code=400, detail="Se deben subir exactamente 6 archivos")
-
+                            media_type= ".csv",
+                            filename= result_path.rsplit("\\", 1)[0], 
+                            )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"{e}")
 
 @app.post("/files/")
 async def create_file(file: Annotated[bytes, File()]): 

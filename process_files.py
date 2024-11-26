@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-def process_and_merge_files(file_paths) -> tuple:
+def process_and_merge_files(file_paths: list) -> tuple:
     dataframes = []
     for file_path in file_paths:
         df = pd.read_csv(file_path, sep= ",", encoding= "latin1")
@@ -25,7 +25,7 @@ def process_and_merge_files(file_paths) -> tuple:
     return result_path, info_processed
 
 
-def quitador_letras(texto: str) -> int:
+def no_letters(texto: str) -> int:
     """
     La función elimina letras de cualquier cadena,
     dejando solo los números como un entero.
@@ -35,7 +35,7 @@ def quitador_letras(texto: str) -> int:
     return int(sin_letras) if sin_letras else 0
 
 
-def quitador_especiales(texto :str) -> str:
+def no_special_characters(texto :str) -> str:
     """
     La función se encarga de quitar caracteres que no sean literales
     """
