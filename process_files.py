@@ -48,3 +48,4 @@ def no_special_characters(texto :str) -> str:
     texto = texto.replace("?", "Ñ").strip()
 
     return texto
+
