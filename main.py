@@ -29,7 +29,11 @@ async def upload_files(files: List[UploadFile] = File(...)):
         file_paths = []
         dateUnix = get_unix_datetime() # Para nombrar a los archivos
 
+        
         for file in files:
+            if (file.filename == ""):
+                raise HTTPException(status_code=400, detail=f"Debe mandar al menos 1 archivo .csv")
+
             print(file)
             # Lista para almecenarlos en la carpeta uploads
             # Quitamos los que no sean .csv y detenemos la ejecucion 

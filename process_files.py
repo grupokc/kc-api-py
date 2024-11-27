@@ -8,7 +8,7 @@ def process_and_merge_files(file_paths: list) -> tuple:
         df = pd.read_csv(file_path, sep= ",", encoding= "latin1")
         # Aquí puedes agregar cualquier procesamiento específico que necesites
         # Por ejemplo, podríamos añadir una columna con el nombre del archivo:
-        df.loc[:, -1] = df.loc[:, -1].apply(no_letters) # quita las letras de la ultima columna
+        df.iloc[:, -1] = df.iloc[:, -1].apply(no_letters) # quita las letras de la ultima columna
 
         df.loc[:, 'archivo_origen'] = os.path.basename(file_path) # Dentro del df se añade de que archivo se obtuvo el registro
         dataframes.append(df)
