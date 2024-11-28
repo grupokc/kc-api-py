@@ -49,3 +49,32 @@ def no_special_characters(texto :str) -> str:
 
     return texto
 
+def find_column(to_find: str, dataframe: pd.DataFrame) -> list:
+    """
+    Encuentra en las columnas del data frame alguna coincidencia para retornar su indice, no es necesaria
+    lo coincidencia caracter a caracter, basta que to_find este contenido o propiamente contenido en la 
+    columna.
+
+    Parametros.
+    to_find: str; la cadena que se buscara dentro de las columnas,
+
+    Retorna. 
+    coincidencias: list<int>, si encontró una coincidencia.
+    None, si no encontro coincidencias.
+    """
+    coincidencias = []
+    try:
+        indice_columna = [(x,i) for x,i in zip(list(dataframe.columns), range(len(dataframe.columns)))]
+
+        for columna, idx_columna in indice_columna:
+            if (to_find.strip().upper() in columna.upper()):
+                coincidencias.append(idx_columna)
+            
+        if (len(coincidencias) == 0):
+            print("Ninguna columna coincide con el criterio de busqueda")
+            return None
+        
+    except Exception as e:
+        print(f"No se pudo ejecutar: {e}")
+    return coincidencias
+
