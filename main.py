@@ -9,7 +9,7 @@ import os
 from typing import List
 from process_files import process_and_merge_files
 
-API_VERSION = "0.0.5"
+API_VERSION = "0.0.6"
 
 app = FastAPI(
     title = "KC-API",
@@ -28,13 +28,9 @@ async def upload_files(files: List[UploadFile] = File(...)):
     try:
         file_paths = []
         dateUnix = get_unix_datetime() # Para nombrar a los archivos
-
-        
         for file in files:
             if (file.filename == ""):
                 raise HTTPException(status_code=400, detail=f"Debe mandar al menos 1 archivo .csv")
-
-            print(file)
             # Lista para almecenarlos en la carpeta uploads
             # Quitamos los que no sean .csv y detenemos la ejecucion 
             if file.filename.endswith(".csv") == False:
@@ -46,8 +42,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
                     buffer.write(await file.read())
                 file_paths.append(file_path)
 
-        print(file_paths)
-
+        [print(x) for x in file_paths]
         result_path, info_porcessed = process_and_merge_files(file_paths)
 
         print(result_path)
@@ -60,9 +55,9 @@ async def upload_files(files: List[UploadFile] = File(...)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
-@app.post("/files/")
-async def create_file(file: Annotated[bytes, File()]): 
-    return {"file_size": len(file)}
+# @app.post("/files/")
+# async def create_file(file: Annotated[bytes, File(...)]): 
+#     return {"file_size": len(file)}
 
 
 @app.get("/")

@@ -1,33 +1,41 @@
 import pandas as pd
 import os
-from tools import get_unix_datetime
+import tools
 
 def process_and_merge_files(file_paths: list) -> tuple:
-    dataframes = []
-    for file_path in file_paths:
-        df = pd.read_csv(file_path, sep= ",", encoding= "latin1")
-        # Aquí puedes agregar cualquier procesamiento específico que necesites
-        # Por ejemplo, podríamos añadir una columna con el nombre del archivo:
-        df.iloc[:, -1] = df.iloc[:, -1].apply(no_letters) # quita las letras de la ultima columna
+    try:
+        print("Procesando ...")
+        dataframes = []
+        for file_path in file_paths:
+            df = pd.read_csv(file_path, sep= ",", encoding= "latin1")
+            # Añadir la procendencia del registro en la ultima columna
+            df.loc[:, 'archivo_origen'] = os.path.basename(file_path) 
+            dataframes.append(df)
 
-        df.loc[:, 'archivo_origen'] = os.path.basename(file_path) # Dentro del df se añade de que archivo se obtuvo el registro
-        dataframes.append(df)
-    
-    result = pd.concat(dataframes, ignore_index=True)
-    
-    # Guardar el resultado
-    dateFromatUnix = get_unix_datetime() # Formato Unix
-    new_name = f"processed_{dateFromatUnix}.csv"
-    result_path = os.path.join("results", new_name) #Devuelve /results/new_name
-    result.to_csv(result_path, index=False)  
+        # Unimos todos los data frames
+        result = pd.concat(dataframes, ignore_index=True)
+        # Modificaciones al DataFrame resultante
+        # 1. Quitar caracteres especiales a la columnas nombres
+        indices_nombre = find_column("Nombre", dataframe = result) # Retorna los indices donde hay coincidencias
+        for indice_nombre in indices_nombre:
+            result.iloc[:, indice_nombre] = result.iloc[:, indice_nombre].apply(no_special_characters)
+        # 2. Quitar letras de la penultima columna
+        result.iloc[:, -2] = result.iloc[:, -2].apply(no_letters)
 
-    info_processed = f"Se procesaron {len(file_paths)} archivos, con {result.shape[0]} registros"
+        # Guardar el resultado
+        dateFromatUnix = tools.get_unix_datetime() # Formato Unix
+        new_name = f"processed_{dateFromatUnix}.csv"
+        result_path = os.path.join("results", new_name) #Devuelve /results/new_name
+        result.to_csv(result_path, index=False)  
 
-    # result_path = "ok"
-    # info_processed = "good"
+        info_processed = f"Se procesaron {len(file_paths)} archivos,  con {result.shape[0]} registros"
 
-    print(result_path, " || ", info_processed)
-    return result_path, info_processed
+        print(result_path, " || ", info_processed)
+    except Exception as ex:
+        info_processed = f"Error: {ex}"
+        print(info_processed)
+    finally:
+        return result_path, info_processed
 
 
 def no_letters(texto: str) -> int:
@@ -77,4 +85,3 @@ def find_column(to_find: str, dataframe: pd.DataFrame) -> list:
     except Exception as e:
         print(f"No se pudo ejecutar: {e}")
     return coincidencias
-
