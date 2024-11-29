@@ -17,11 +17,18 @@ def create_cursor() -> pyodbc.Cursor:
         "DRIVER={ODBC Driver 18 for SQL Server};"
         f"SERVER={variables["SERVER"]};"
         f"DATABASE={variables["DATABASE"]};"
-        f"PASSWORD={variables["PASSWORD"]};"
-        f"USERNAME={variables["USERNAME"]};" 
-        "Trusted_Connection=yes;"  
-        "TrustServerCertificate=yes;"
+        f"PWD={variables["PWD"]};"
+        f"UID={variables["UID"]};"
+        "UseIntegrated Security=No;"
+        "DataEncryption=Optional;"
+        "Language=(Default);"
+        "DataEncryption=Optional;"
+        "TrustServerCertificate=Yes;"
+
+        # "Trusted_Connection=no;"  
+        # "TrustServerCertificate=no;"
     )
+    # print(connection_string)
     try:
         # Conectandonos a la data base 
         conn = pyodbc.connect(connection_string)
@@ -51,10 +58,10 @@ def get_variables() -> dict:
         variables = {
             "SERVER": os.getenv("SERVER"),
             "DATABASE": os.getenv("DATABASE"),
-            "USERNAME": os.getenv("USERNAME"),
-            "PASSWORD": os.getenv("PASSWORD")
+            "UID": os.getenv("UID"),
+            "PWD": os.getenv("PWD")
         }
-        print(f"Usuario: {variables['USERNAME']}; Servidor: {variables['SERVER']}; Base de Datos: {variables['DATABASE']}")
+        print(f"Usuario: {variables['UID']}; Servidor: {variables['SERVER']}; Base de Datos: {variables['DATABASE']}")
         return variables
     except Exception as ex:
         print("Ocurrió un error al cargar las variables de entorno: ", ex)
@@ -62,3 +69,5 @@ def get_variables() -> dict:
 
 
 
+if __name__ == "__main__":
+    create_cursor()
