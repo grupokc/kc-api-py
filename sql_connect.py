@@ -71,3 +71,4 @@ def get_variables() -> dict:
 
 if __name__ == "__main__":
     create_cursor()
+    # c.execute("")W

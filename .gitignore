@@ -166,3 +166,4 @@ cython_debug/
 *.vsidx
 venv1/
 .env 
+*.ipynb
