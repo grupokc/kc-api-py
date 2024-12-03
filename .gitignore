@@ -167,3 +167,4 @@ cython_debug/
 venv1/
 .env 
 *.ipynb
+*.txt

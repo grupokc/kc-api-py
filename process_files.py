@@ -15,7 +15,7 @@ def process_and_merge_files(file_paths: list) -> tuple:
         # Unimos todos los data frames
         result = pd.concat(dataframes, ignore_index=True)
         # Modificaciones al DataFrame resultante
-        # 1. Quitar caracteres especiales a la columnas nombres
+        # 1. Quitar caracteres especiales a la columnas nombres!""
         indices_nombre = find_column("Nombre", dataframe = result) # Retorna los indices donde hay coincidencias
         for indice_nombre in indices_nombre:
             result.iloc[:, indice_nombre] = result.iloc[:, indice_nombre].apply(no_special_characters)
