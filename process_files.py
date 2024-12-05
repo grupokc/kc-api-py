@@ -51,11 +51,16 @@ def no_letters(texto: str) -> int:
 def no_special_characters(texto :str) -> str:
     """
     La función se encarga de quitar caracteres que no sean literales
+
+    Parametros.
+    texto: str; cadena donde se quitaran los caracteres especiales
     """
     texto = texto.strip()
     texto = texto.replace("?", "Ñ").strip()
 
     return texto
+
+
 
 def find_column(to_find: str, dataframe: pd.DataFrame) -> list:
     """
@@ -85,3 +90,129 @@ def find_column(to_find: str, dataframe: pd.DataFrame) -> list:
     except Exception as e:
         print(f"No se pudo ejecutar: {e}")
     return coincidencias
+
+
+
+def recortar_df(
+        df : pd.DataFrame,
+        col_indice: int = 1,
+        col_nombre: str = None,
+        sentido: str = "left"        ) -> pd.DataFrame:
+    """
+    Corta un dataframe dado en el indice indicado, o bien en el nombre de la columna, devuelve todo aquello que 
+    estuvo antes o despues  del corte.
+
+    Parametros.
+    df: pd.DataFrame, es el df donde se realizará el recorte.
+    col_indice: int; indica el indice donde cortara.
+    col_nombre: str; (Opcional) indica el nombre de la columna donde se recortara.
+    sentido; str, indica que lado del recorte se devolvera
+
+    Retorna:
+    pd.DataFrame; dataFrame recortado.
+
+    """
+    # Obtenemos el nombre de las columnas en lista  
+    columnas = list(df.columns)
+    indice_columna = {columna.upper().strip() : i 
+                      for i, columna in enumerate(columnas)}
+    
+    print(indice_columna)
+    if (col_nombre != None):
+        try:
+            # Obtenemos el indice para hacer el recorte 
+            col_indice = indice_columna[col_nombre.upper().strip()]
+        except KeyError as e:
+            print(f"No existe la columna: {col_nombre} en el DataFrame proporcionado \n {e}")
+            return 
+    
+    # Tomamos todas las columnas de la derecha 
+    if (sentido == "right"):
+        columnas_requeridas = columnas[col_indice: ]
+    else:
+        columnas_requeridas = columnas[: col_indice + 1]
+        
+    # Obtenerlas en un data frame
+    df_recortado = df[columnas_requeridas]
+
+    return df_recortado
+
+
+def recortar_df(
+        df : pd.DataFrame,
+        col_indice: int = 1,
+        col_nombre: str = None,
+        sentido: str = "left"        ) -> pd.DataFrame:
+    """
+    Corta un dataframe dado en el indice indicado, o bien en el nombre de la columna, devuelve todo aquello que 
+    estuvo antes o despues  del corte.
+
+    Parametros.
+    df: pd.DataFrame, es el df donde se realizará el recorte.
+    col_indice: int; indica el indice donde cortara.
+    col_nombre: str; (Opcional) indica el nombre de la columna donde se recortara.
+    sentido; str, indica que lado del recorte se devolvera
+
+    Retorna:
+    pd.DataFrame; dataFrame recortado.
+
+    """
+    # Obtenemos el nombre de las columnas en lista  
+    columnas = list(df.columns)
+    indice_columna = {columna.upper().strip() : i 
+                      for i, columna in enumerate(columnas)}
+    
+    print(indice_columna)
+    if (col_nombre != None):
+        try:
+            # Obtenemos el indice para hacer el recorte 
+            col_indice = indice_columna[col_nombre.upper().strip()]
+        except KeyError as e:
+            print(f"No existe la columna: {col_nombre} en el DataFrame proporcionado \n {e}")
+            return 
+    
+    # Tomamos todas las columnas de la derecha 
+    if (sentido == "right"):
+        columnas_requeridas = columnas[col_indice: ]
+    else:
+        columnas_requeridas = columnas[: col_indice + 1]
+        
+    # Obtenerlas en un data frame
+    df_recortado = df[columnas_requeridas]
+
+    return df_recortado
+
+
+def insertar_columnas(dataFrame: pd.DataFrame,
+                      posicion_insertado: int,
+                      nombre_insertadas: list,
+                      datos_columnas: list[list | pd.Series]
+                      ) -> pd.DataFrame:
+    
+    # Verificar que la cantidad de nombres para insertar conincida con la cantidad de listas proporcionadas
+    if len(nombre_insertadas) != len(datos_columnas):
+        print(f"Error: NO se ha proporcionado la misma cantidad de columnas como de datos, se proporcionaron {len(nombre_insertadas)} columnas y {len(datos_columnas)} datos")
+        return 
+    
+    # Verificar si el tamaño de todas las series 
+    for idx_dato_columna, dato_columna in enumerate(datos_columnas):
+        if (len(dato_columna) != dataFrame.shape[0]):
+            print(dato_columna)
+            print(f"La lista numero {idx_dato_columna} deben de ser de la misma longitud que la del data frame, deben tener {dataFrame.shape[0]} las listas proporcionadas")
+            return 
+    try:
+        recorte_izq = recortar_df(dataFrame, posicion_insertado)
+        recorte_derecha = recortar_df(dataFrame, posicion_insertado + 1, sentido= "right")
+
+        # Formar Df temporal 
+        df_temp = pd.DataFrame(data=zip(*datos_columnas), columns= nombre_insertadas)
+        
+        # Concatenar por df izquierda 
+        df_pegado = pd.concat([recorte_izq, df_temp, recorte_derecha], axis= 1)
+
+        return df_pegado
+
+    except Exception as e:
+        print(f"Error al insertar: {e}")
+        return 
+    
