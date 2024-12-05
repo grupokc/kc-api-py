@@ -162,7 +162,7 @@ def recortar_df(
     indice_columna = {columna.upper().strip() : i 
                       for i, columna in enumerate(columnas)}
     
-    print(indice_columna)
+    # print(indice_columna)
     if (col_nombre != None):
         try:
             # Obtenemos el indice para hacer el recorte 
