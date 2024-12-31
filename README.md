@@ -8,6 +8,7 @@ source venv/bin/activate
 pip install fastapi uvicorn python-multipart pandas
 pip install -r requirements.txt
 uvicorn main:app --reload
+
 ```
 ### Configuración del archivo .env
 Este proyecto requiere un archivo `.env` en la raiz del proyecto con las siguientes variables de entorno:

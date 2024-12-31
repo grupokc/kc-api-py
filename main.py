@@ -9,7 +9,7 @@ import os
 from typing import List
 from process_files import process_and_merge_files
 
-API_VERSION = "0.0.6"
+API_VERSION = "0.0.9"
 
 app = FastAPI(
     title = "KC-API",
@@ -55,7 +55,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{e}")
 
-# @app.post("/files/")
+# @app.post("/files/") �
 # async def create_file(file: Annotated[bytes, File(...)]): 
 #     return {"file_size": len(file)}
 
