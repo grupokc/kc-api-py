@@ -169,6 +169,6 @@ venv1/
 *.ipynb
 *.txt
 
-/archivos_muestra
+#/archivos_muestra
 
 .idea
