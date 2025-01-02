@@ -129,7 +129,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+.idea
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -170,5 +170,5 @@ venv1/
 *.txt
 
 #/archivos_muestra
-
-.idea
+/.idea
+.idea/
