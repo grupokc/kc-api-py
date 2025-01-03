@@ -5,10 +5,14 @@ from tools import get_unix_datetime
 from fastapi.responses import FileResponse
 from fastapi.exceptions import HTTPException
 import pandas as pd
-import os
 from typing import List
+import os
 from process_files import process_and_merge_files
-import streamlit 
+import streamlit as st
+from streamlit_from_user import inicio, boton_cargar, test
+import subprocess
+import uvicorn
+
 
 API_VERSION = "0.0.9"
 
@@ -16,6 +20,10 @@ app = FastAPI(
     title = "KC-API",
     version= API_VERSION
 )
+
+def start_server():
+    print("Servidor iniciado")
+    uvicorn.run(app= app, port = 8000, host= '127.0.0.1')
 
 UPLOAD_DIRECTORY = "uploads"
 RESULT_DIRECTORY = "results"
@@ -74,3 +82,29 @@ async def get_version():
 async def saludar():
     return {"message": "Saludos Fraternos"}
 
+
+
+def levantar_servidor():
+    os.system('echo Levantando servidor...')
+    try:
+        os.system(r'uvicorn main:app')
+        
+    except Exception as e:
+        print(f"echo No ha sido posible levantar el servidor {e}")
+
+
+
+
+
+if __name__ == "__main__":
+    print("Servicio inicializado")
+
+    # Pantalla de inicio 
+    inicio()
+
+    # Mostrar boton de carga al usuario 
+    # boton_cargar()
+    test()
+
+    # levantamos el servidor 
+    # start_server()

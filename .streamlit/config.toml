@@ -1,0 +1,11 @@
+[server]
+maxUploadSize = 2000
+
+[theme]
+base = "dark"
+primaryColor = "green"
+secondaryBackgroundColor = "#f63366"
+
+font = "serif"
+
+
