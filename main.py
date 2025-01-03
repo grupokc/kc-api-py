@@ -9,12 +9,12 @@ from typing import List
 import os
 from process_files import process_and_merge_files
 import streamlit as st
-from streamlit_from_user import inicio, boton_cargar, test
+from streamlit_from_user import inicio, boton_cargar, test, enviar_descargar_archivos
 import subprocess
 import uvicorn
+import requests
 
-
-API_VERSION = "0.0.9"
+API_VERSION = "0.0.33"
 
 app = FastAPI(
     title = "KC-API",
@@ -93,18 +93,26 @@ def levantar_servidor():
         print(f"echo No ha sido posible levantar el servidor {e}")
 
 
+def main():
 
-
-
-if __name__ == "__main__":
-    print("Servicio inicializado")
+    temp_url = "http://127.0.0.1:8000/upload/"
 
     # Pantalla de inicio 
     inicio()
 
     # Mostrar boton de carga al usuario 
     # boton_cargar()
-    test()
+    archivos_usuario = test()
 
+    enviar_descargar_archivos(temp_url, archivos_usuario)
     # levantamos el servidor 
     # start_server()
+
+
+temp_url = "http://127.0.0.1:8000/upload/"
+
+if __name__ == "__main__":
+    print("Servicio inicializado")
+    # Funcion orquestador
+    main()
+

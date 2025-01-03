@@ -6,8 +6,8 @@ import os
 
 def inicio():
 
-    st.title("Bienvenido a la KC-API de procesamiento de archivos")
-    st.header(f"Version: {"0.0.9"}", divider = "blue")
+    st.title("Bienvenido a la :blue[KC-API] de procesamiento de archivos")
+    st.header(f"Version: :gray[{"0.0.33"}]", divider = "blue")
 
 
 def boton_cargar():
@@ -20,21 +20,86 @@ def boton_cargar():
     if (btnn_carga):
         print("SE HA PRESIONADO EL BOTON DE CARGA")
 
-        st.header("HOLA ")
+import requests
+# Función para cargar archivos
+import streamlit as st
+import requests
 
-
+# Función para cargar archivos desde Streamlit
 def test():
+    uploaded_files = st.file_uploader(
+        label="Subir archivos",
+        type="csv",
+        accept_multiple_files=True,
+        key="bttn_uploader",
+        label_visibility='visible',
+    )
 
-    bttn = st.file_uploader(label= "Subir archivos",
-                            type = "csv",
-                            accept_multiple_files= True, 
-                            key= "bttn_uploader", 
-                            label_visibility= 'visible',
-                            
-                            )
-    for file in bttn:
-        print(file)
+    if uploaded_files:
+        st.write(f"Archivos subidos: {[file.name for file in uploaded_files]}")
+    else:
+        st.warning("No se han subido archivos aún.")
+    
+    return uploaded_files
+
+# Función para enviar los archivos como un grupo a la API
+
+import io 
+# Función para enviar archivos y manejar el archivo de respuesta
+def enviar_descargar_archivos(url_upload: str, archivos):
+    if archivos:
+        bttn_enviar = st.button(
+            label="Enviar archivos",
+            use_container_width=True,
+            type="primary"
+        )
+        if bttn_enviar:
+            try:
+                st.warning("Cargando ...")
+
+                # Preparar archivos para enviar
+                files = [("files", (archivo.name, archivo.getvalue())) for archivo in archivos]
+
+                # Enviar archivos
+                response = requests.post(
+                    url=url_upload,
+                    files=files
+                )
+                # Verificar si la solicitud fue exitosa
+                if response.status_code == 200:
+                    st.success("Archivos enviados correctamente.")
+
+                    # Guardar el archivo devuelto temporalmente
+                    result_filename = response.headers.get(
+                        "Content-Disposition", "result.csv"
+                    ).split("filename=")[-1]
+                    
+                    st.info(f"Archivo devuelto: {result_filename}")
+
+                    file_content = io.StringIO(response.content.decode("utf-8"))
+                    df = pd.read_csv(file_content)
+                    st.dataframe(df)
+
+                    
+                    # Mostrar botón para descargar el archivo
+                    st.download_button(
+                        label="Descargar archivo procesado",
+                        data=response.content,
+                        file_name=result_filename,
+                        mime="text/csv"
+                    )
+
+       
+                else:
+                    st.error(f"Error al enviar los archivos. Status: {response.status_code}")
+                    st.write(response.json())
+            except Exception as e:
+                st.error(f"Ocurrió un error: {e}")
+    else:
+        st.warning("Sube archivos antes de enviarlos.")
 
 
-def ventana_carga():
-    ...
+
+import pandas as pd 
+def ver_respuesta(df : pd.DataFrame):
+    df.head()
