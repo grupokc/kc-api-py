@@ -100,13 +100,23 @@ def main():
     # Pantalla de inicio 
     inicio()
 
+    
+    tab1, tab2 = st.tabs(["Cargar Archivos", "Procesar Archivos"])
+    with tab1: 
+        tab1.subheader("Sube tus archivos para ser transformados")
+        archivos_usuario = test()
+
+    with tab2:
+        enviar_descargar_archivos(temp_url, archivos_usuario)
+
+
     # Mostrar boton de carga al usuario 
     # boton_cargar()
-    archivos_usuario = test()
+    # archivos_usuario = test()
 
-    enviar_descargar_archivos(temp_url, archivos_usuario)
     # levantamos el servidor 
     # start_server()
+
 
 
 temp_url = "http://127.0.0.1:8000/upload/"

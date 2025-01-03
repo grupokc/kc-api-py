@@ -64,8 +64,11 @@ def no_special_characters(texto :str) -> str:
 
     try: 
         texto = texto.replace("?", "Ñ").strip()
-
         texto = texto.replace("�", "Ñ").strip()
+        texto = texto.replace("&", "Ñ").strip()
+        texto = texto.replace("/", " ").strip()
+        texto = texto.replace(",", " ").strip()
+
 
     except:
         pass

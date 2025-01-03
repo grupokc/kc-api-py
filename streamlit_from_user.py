@@ -5,9 +5,11 @@ import os
 
 
 def inicio():
+    st.sidebar.title("Inicio")
 
     st.title("Bienvenido a la :blue[KC-API] de procesamiento de archivos")
     st.header(f"Version: :gray[{"0.0.33"}]", divider = "blue")
+
 
 
 def boton_cargar():
@@ -32,11 +34,11 @@ def test():
         type="csv",
         accept_multiple_files=True,
         key="bttn_uploader",
-        label_visibility='visible',
+        label_visibility="visible",
     )
 
     if uploaded_files:
-        st.write(f"Archivos subidos: {[file.name for file in uploaded_files]}")
+        st.write(f"Archivos subidos: :green[{[file.name for file in uploaded_files]}]")
     else:
         st.warning("No se han subido archivos aún.")
     
@@ -49,7 +51,7 @@ import io
 def enviar_descargar_archivos(url_upload: str, archivos):
     if archivos:
         bttn_enviar = st.button(
-            label="Enviar archivos",
+            label="Transformar archivos",
             use_container_width=True,
             type="primary"
         )
@@ -78,9 +80,9 @@ def enviar_descargar_archivos(url_upload: str, archivos):
 
                     file_content = io.StringIO(response.content.decode("utf-8"))
                     df = pd.read_csv(file_content)
-                    st.dataframe(df)
+                    st.dataframe(df.head(100))
 
-                    
+
                     # Mostrar botón para descargar el archivo
                     st.download_button(
                         label="Descargar archivo procesado",
